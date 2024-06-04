@@ -38,7 +38,8 @@ export const authService = {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
-      }
+      },
+      refresh: true,
     })
     .then((res) => {
       if(!res.ok) throw new Error('Não autorizado');
