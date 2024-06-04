@@ -7,12 +7,28 @@ export const authService = {
       method: 'POST',
       body: { username,password }
     })
+    // tratamento do access token
     .then(async (res) => {
       if(!res.ok) throw new Error('Usuário ou senha inválidos!');
 
       const body = res.body;
       //console.log(body);
       tokenService.save(body.data.access_token);
+
+      return body;
+    })
+    // tratamento do refresh token
+    .then(async ({ data }) => {
+      const { refresh_token } = data;
+      //console.log(refresh_token);
+
+      const res = await httpClient('/api/refresh', {
+        method: 'POST',
+        body: {
+          refresh_token,
+        },
+      })
+      console.log(res);
     })
   },
   async getSession(context) {
