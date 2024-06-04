@@ -1,3 +1,4 @@
+import { withSession } from "../src/services/auth/session";
 import { tokenService } from "../src/services/auth/tokenService"
 import nookies from 'nookies';
 
@@ -15,13 +16,32 @@ export default function AuthPageSSR(props) {
   )
 }
 
-export async function getServerSideProps(context) {
-  const cookies = nookies.get(context);
-  console.log(cookies);
-
+export const getServerSideProps = withSession((context) => {
   return {
     props: {
-      token: tokenService.get(context),
-    },
+      session: context.req.session,
+    }
   }
-}
+});
+
+// export async function getServerSideProps(context) {
+//   const cookies = nookies.get(context);
+//   console.log(cookies);
+
+//   try {
+//     const session = await authService.getSession(context);
+  
+//     return {
+//       props: {
+//         session,
+//       },
+//     }
+//   } catch (err) {
+//     return {
+//       redirect: {
+//         permanent: false,
+//         destination: '/?error=401',
+//       }
+//     }
+//   }
+// }

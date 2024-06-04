@@ -14,7 +14,22 @@ export const authService = {
       //console.log(body);
       tokenService.save(body.data.access_token);
     })
-  }
+  },
+  async getSession(context) {
+    const token = tokenService.get(context);
+
+    return httpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/session`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then((res) => {
+      if(!res.ok) throw new Error('Não autorizado');
+      
+      return res.body.data;
+    });
+  },
 };
 
 
