@@ -5,10 +5,9 @@ export const authService = {
   async login({ username, password }) {
     return httpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/login`, {
       method: 'POST',
-      body: { username,password }
+      body: { username, password }
     })
-    // tratamento do access token
-    .then(async (res) => {
+    .then(async (res) => { // tratamento do access token
       if(!res.ok) throw new Error('Usuário ou senha inválidos!');
 
       const body = res.body;
@@ -17,8 +16,7 @@ export const authService = {
 
       return body;
     })
-    // tratamento do refresh token
-    .then(async ({ data }) => {
+    .then(async ({ data }) => { // tratamento do refresh token
       const { refresh_token } = data;
       //console.log(refresh_token);
 
@@ -31,14 +29,15 @@ export const authService = {
       console.log(res);
     })
   },
-  async getSession(context) {
-    const token = tokenService.get(context);
+  async getSession(ctx = null) {
+    const token = tokenService.get(ctx);
 
     return httpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/session`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
       },
+      ctx,
       refresh: true,
     })
     .then((res) => {
